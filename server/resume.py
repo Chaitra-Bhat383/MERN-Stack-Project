@@ -64,7 +64,7 @@ elif (result == 7):
 elif (result == 8):
     print("Devops")
 elif (result == 9):
-    print("DotNet Developer")
+    print("Web Developer")
 elif (result == 10):
     print("ETL developer")
 elif (result == 11):

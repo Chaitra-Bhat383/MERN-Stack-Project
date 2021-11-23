@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const authenticate = require('../middleware/authenticate');
 const { spawn } = require('child_process');
 
 
 require('../db/conn');
 const User = require('../model/userSchema');
+const { stringify } = require('querystring');
 
 router.get('/', (req, res) => {
     res.send(`Hello world from signup in router js`);
@@ -106,21 +106,18 @@ router.post('/signin', async(req, res) => {
     }
 });
 
-router.get('/home', authenticate, (req, res) => {
-    console.log("Hello from home");
-    res.send(req.rootUser);
-});
+
 
 router.post('/upload', async(req, res) => {
     try {
-        console.log("yo wassup");
-        const { resumeString } = req.body;
-        console.log(resumeString);
-        const childPython = spawn('python', ["resume.py", "vlan, lan networks"]);
+        const resumeString = req.body;
+        const childPython = spawn('python', ["resume.py", stringify(resumeString)]);
         childPython.stdout.on('data', (data) => {
-            console.log(`${data}`);
+            const fs = require('fs');
+            const myConsole = new console.Console(fs.createWriteStream('./output/Result.txt'));
+            myConsole.log(`${data}`);
+            
         });
-
         childPython.stderr.on('data', (data) => {
             console.log(`error: ${data}`);
         });
@@ -130,6 +127,12 @@ router.post('/upload', async(req, res) => {
     }
 
 });
+
+
+router.get('/home',authenticate, (req, res) => {
+    res.send(`Hello world from about`);
+});
+
 
 
 
